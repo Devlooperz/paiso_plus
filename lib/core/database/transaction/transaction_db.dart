@@ -44,4 +44,15 @@ inner join products on transactions.product = products.id''')
         .toList();
     return transactionData;
   }
+
+  Future<void> deleteTransaction(int transactionId) async {
+    (delete(transactions)..where((tbl) => tbl.id.equals(transactionId))).go();
+  }
+
+  Future<int> updateTransaction(
+      TransactionsCompanion transactionsCompanion, int transactionId) async {
+    return await (update(transactions)
+          ..where((tbl) => tbl.id.equals(transactionId)))
+        .write(transactionsCompanion);
+  }
 }

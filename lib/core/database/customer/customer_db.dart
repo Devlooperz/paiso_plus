@@ -23,4 +23,12 @@ class CustomersDao extends DatabaseAccessor<MyDatabase>
   Future<List<Customer>> getAllCustomers() async {
     return await select(customers).get();
   }
+
+  Future<bool> updateCustomer(Customer customer) async {
+    return update(customers).replace(customer);
+  }
+
+  Future<void> deleteCustomer(int customerId) async {
+    (delete(customers)..where((tbl) => tbl.id.equals(customerId))).go();
+  }
 }
