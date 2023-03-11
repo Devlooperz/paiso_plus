@@ -54,8 +54,10 @@ class AddTransactionProvider extends StateNotifier<List<TransactionModel>> {
     return productData.first.id;
   }
 
-  void submitTransaction() async {
-    if (state.isEmpty) return;
+  Future<void> submitTransaction() async {
+    if (state.isEmpty) {
+      throw ("First Enter Transactions");
+    }
     for (TransactionModel element in state) {
       await MyDatabase().transactionsDao.addTransaction(TransactionsCompanion(
           amount: Value<double>(element.rate),
@@ -65,6 +67,12 @@ class AddTransactionProvider extends StateNotifier<List<TransactionModel>> {
           transactiondate:
               Value<DateTime>(element.nepaliDateTime.toDateTime())));
     }
+  }
+
+  void removeItem(int transactionId) {
+    final List<TransactionModel> transactions = state;
+    transactions.removeWhere((element) => element.id == transactionId);
+    state = [...transactions];
   }
 
   void reset() {

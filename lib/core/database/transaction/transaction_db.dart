@@ -44,4 +44,29 @@ inner join products on transactions.product = products.id''')
         .toList();
     return transactionData;
   }
+
+  Future<void> deleteTransaction(int transactionId) async {
+    (delete(transactions)..where((tbl) => tbl.id.equals(transactionId))).go();
+  }
+
+  Future<int> updateTransaction(
+      TransactionsCompanion transactionsCompanion, int transactionId) async {
+    return await (update(transactions)
+          ..where((tbl) => tbl.id.equals(transactionId)))
+        .write(transactionsCompanion);
+  }
+
+  Future<List<TransactionModel>> getTransactionByCustomer(
+      int customerId) async {
+    final query = await customSelect(
+        '''SELECT transactions.id,transactions.amount,transactions.product,transactions.transactiondate,transactions.quntity,products.id as product_id,products.name from transactions INNER join
+products on 
+transactions.product=products.id WHERE transactions.customer=? order by transactions.transactiondate 
+;
+''',
+        readsFrom: {transactions, products},
+        variables: [Variable.withInt(customerId)]).get();
+
+    return query.map((e) => TransactionModel.fromDatabase(e.data)).toList();
+  }
 }

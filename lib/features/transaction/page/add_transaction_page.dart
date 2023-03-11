@@ -198,7 +198,7 @@ class _AddTransactionState extends ConsumerState<AddTransaction> {
   @override
   Widget build(BuildContext context) {
     final data = ref.watch(addTransactionProvider);
-    _popupBuilderKey.currentState?.clear();
+    print("rebuild");
     return Scaffold(
       appBar: AppBar(
         title: const Text("Add Transaction"),
@@ -338,6 +338,7 @@ class _AddTransactionState extends ConsumerState<AddTransaction> {
                             ref
                                 .read(addTransactionProvider.notifier)
                                 .addNewTransaction(nepaliDateTime!);
+                            _popupBuilderKey.currentState?.clear();
                           } catch (e) {
                             showDialog(
                                 context: context,
@@ -363,10 +364,32 @@ class _AddTransactionState extends ConsumerState<AddTransaction> {
                     ),
                     const Spacer(),
                     ElevatedButton(
-                        onPressed: () {
-                          ref
-                              .read(addTransactionProvider.notifier)
-                              .submitTransaction();
+                        onPressed: () async {
+                          try {
+                            await ref
+                                .read(addTransactionProvider.notifier)
+                                .submitTransaction();
+                            if (!mounted) return;
+                            Navigator.pop(context);
+                          } catch (e) {
+                            ScaffoldMessenger.of(context)
+                                .showMaterialBanner(MaterialBanner(
+                                    content: Text(
+                                      e.toString(),
+                                      style: TextStyle(color: Colors.red),
+                                    ),
+                                    actions: [
+                                  IconButton(
+                                      onPressed: () {
+                                        ScaffoldMessenger.of(context)
+                                            .clearMaterialBanners();
+                                      },
+                                      icon: Icon(
+                                        Icons.close,
+                                        color: Colors.red,
+                                      ))
+                                ]));
+                          }
                         },
                         child: const Text("Submit")),
                     const Spacer()
@@ -386,13 +409,9 @@ class _AddTransactionState extends ConsumerState<AddTransaction> {
                       itemBuilder: (context, index) {
                         final transactionData = data[index];
                         return InkWell(
-                          onDoubleTap: () {
-                            setState(() {
-                              editMode = true;
-                            });
-                          },
+                          onDoubleTap: () {},
                           child: Container(
-                            height: 60,
+                            height: 80,
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 10, vertical: 4),
                             decoration: BoxDecoration(
@@ -439,18 +458,33 @@ class _AddTransactionState extends ConsumerState<AddTransaction> {
                                     ),
                                   ],
                                 ),
-                                Row(
+                                Column(
                                   children: [
-                                    const Icon(
-                                      Icons.attach_money,
-                                      color: Colors.black,
+                                    IconButton(
+                                        onPressed: () {
+                                          ref
+                                              .read(addTransactionProvider
+                                                  .notifier)
+                                              .removeItem(transactionData.id);
+                                        },
+                                        icon: const Icon(
+                                          Icons.delete,
+                                          color: Colors.red,
+                                        )),
+                                    Row(
+                                      children: [
+                                        const Icon(
+                                          Icons.attach_money,
+                                          color: Colors.black,
+                                        ),
+                                        Text(
+                                          currencyFormat.format(
+                                              transactionData.quantity *
+                                                  transactionData.rate),
+                                          style: TextStyles.boldStyle,
+                                        )
+                                      ],
                                     ),
-                                    Text(
-                                      currencyFormat.format(
-                                          transactionData.quantity *
-                                              transactionData.rate),
-                                      style: TextStyles.boldStyle,
-                                    )
                                   ],
                                 )
                               ],
@@ -458,7 +492,7 @@ class _AddTransactionState extends ConsumerState<AddTransaction> {
                           ),
                         );
                       })
-                  : Center(
+                  : const Center(
                       child: Text("No Transaction's Please Add"),
                     ),
             )

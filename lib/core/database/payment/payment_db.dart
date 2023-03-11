@@ -22,4 +22,14 @@ class PaymentsDao extends DatabaseAccessor<MyDatabase> with _$PaymentsDaoMixin {
         customerId: Value<int>(customerId),
         paidDate: Value<DateTime>(paidDate)));
   }
+
+  Future<void> deletePayment(int paymentId) async {
+    await (delete(payments)..where((tbl) => tbl.id.equals(paymentId))).go();
+  }
+
+  Future<int> updatePayment(
+      PaymentsCompanion paymentsCompanion, int paymentId) async {
+    return await (update(payments)..where((tbl) => tbl.id.equals(paymentId)))
+        .write(paymentsCompanion);
+  }
 }

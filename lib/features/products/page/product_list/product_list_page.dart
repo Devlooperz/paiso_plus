@@ -54,6 +54,7 @@ class ProductListPage extends ConsumerWidget {
                                     nameEditingController.text,
                                     int.parse(quantityEditingController.text));
                                 nameEditingController.clear();
+                                quantityEditingController.clear();
                                 Navigator.pop(context, true);
                               }
                             },

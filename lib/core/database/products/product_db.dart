@@ -20,4 +20,14 @@ class ProductsDao extends DatabaseAccessor<MyDatabase> with _$ProductsDaoMixin {
   Future<int> addNewProduct(ProductsCompanion product) async {
     return await into(products).insert(product);
   }
+
+  Future<void> deleteProduct(int productId) async {
+    await (delete(products)..where((tbl) => tbl.id.equals(productId))).go();
+  }
+
+  Future<int> updateProduct(
+      ProductsCompanion productsCompanion, int paymentId) async {
+    return await (update(products)..where((tbl) => tbl.id.equals(paymentId)))
+        .write(productsCompanion);
+  }
 }
