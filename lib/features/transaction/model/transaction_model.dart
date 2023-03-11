@@ -32,6 +32,18 @@ class TransactionModel {
     );
   }
 
+  factory TransactionModel.fromDatabase(Map<String, dynamic> data) {
+    return TransactionModel(
+        id: data["id"],
+        product:
+            Product(id: data["product_id"], name: data["name"], quanity: 0),
+        rate: data['amount'],
+        quantity: data["quntity"],
+        nepaliDateTime:
+            DateTime.fromMillisecondsSinceEpoch(data["transactiondate"] * 1000)
+                .toNepaliDateTime());
+  }
+
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
