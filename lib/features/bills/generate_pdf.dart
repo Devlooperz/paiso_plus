@@ -104,10 +104,11 @@ class _GenerateBillsState extends State<GenerateBills> {
       ));
       final byte = await pdf.save();
       final dir = await getApplicationDocumentsDirectory();
-      final file = File(
-          '${dir.path}/${isBnb ? 'BNB' : 'Apple'}_${customer!.name}_${NepaliDateTime.now()}.pdf');
+      final file = await File(
+              '${dir.path}/${isBnb ? 'BNB' : 'Apple'}_${customer!.name}_${NepaliDateTime.now()}.pdf')
+          .create();
 
-      file.writeAsBytes(byte);
+      await file.writeAsBytes(byte);
     }
   }
 
