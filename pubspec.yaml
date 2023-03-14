@@ -27,6 +27,7 @@ dependencies:
   dropdown_search: ^5.0.6
   intl: ^0.18.0
   nepali_date_picker: ^5.3.1
+  shared_preferences: ^2.0.18
 
 
 dev_dependencies:
