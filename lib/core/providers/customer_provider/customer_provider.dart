@@ -14,6 +14,20 @@ class CustomerProvider extends StateNotifier<List<Customer>> {
     state = data;
   }
 
+  Future<void> deleteCustomer(int id) async {
+    await MyDatabase().customersDao.deleteCustomer(id);
+  }
+
+  Future<void> updateCustomer(
+      int id, String name, String address, int? phoneNumber) async {
+    await MyDatabase().customersDao.updateCustomer(Customer(
+        id: id,
+        name: name,
+        address: address,
+        amountPaid: 0,
+        mobileNumber: phoneNumber));
+  }
+
   Future<void> addCustomer(String name, String address,
       [String? phoneNumber]) async {
     await MyDatabase().customersDao.addCustomer(CustomersCompanion(

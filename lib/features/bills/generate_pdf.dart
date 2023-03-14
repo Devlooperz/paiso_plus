@@ -42,7 +42,9 @@ class _GenerateBillsState extends State<GenerateBills> {
           pw.Row(mainAxisAlignment: pw.MainAxisAlignment.center, children: [
             pw.Column(children: [
               pw.Text(
-                  isBnb ? "BNB Computer Suppliers" : "Apple Computer Suppliers",
+                  isBnb
+                      ? "BMB Computer & Traning Center"
+                      : "Apple Computer Suppliers",
                   style: const pw.TextStyle(fontSize: 25)),
               pw.Text("Sandhikharka, Arghakhanchi"),
               pw.SizedBox(height: 15),
@@ -53,7 +55,7 @@ class _GenerateBillsState extends State<GenerateBills> {
               children: [
                 pw.Text("Name: ${customer!.name}"),
                 pw.Text(
-                  isBnb ? "PAN:30595996" : "VAT:602296375",
+                  isBnb ? "PAN:305295996" : "VAT:602296375",
                 )
               ]),
           pw.SizedBox(
@@ -93,19 +95,29 @@ class _GenerateBillsState extends State<GenerateBills> {
             height: 20,
           ),
           pw.Row(mainAxisAlignment: pw.MainAxisAlignment.end, children: [
-            pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.end, children: [
-              pw.Text("Sum Amount: ${currencyFormat.format(totalAmount)}"),
-              pw.Text("13% VAT: ${currencyFormat.format(vatAmount)}"),
-              pw.Text(
-                  "Total:  ${currencyFormat.format(totalAmount + vatAmount)}"),
-            ])
+            if (!isBnb)
+              pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.end,
+                  children: [
+                    pw.Text(
+                        "Sum Amount: ${currencyFormat.format(totalAmount)}"),
+                    pw.Text("13% VAT: ${currencyFormat.format(vatAmount)}"),
+                    pw.Text(
+                        "Total:  ${currencyFormat.format(totalAmount + vatAmount)}"),
+                  ])
+            else
+              pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.end,
+                  children: [
+                    pw.Text("Total: ${currencyFormat.format(totalAmount)}"),
+                  ])
           ]),
         ],
       ));
       final byte = await pdf.save();
       final dir = await getApplicationDocumentsDirectory();
       final file = await File(
-              '${dir.path}/${isBnb ? 'BNB' : 'Apple'}_${customer!.name}_${NepaliDateTime.now()}.pdf')
+              '${dir.path}/${isBnb ? 'BMB' : 'Apple'}_${customer!.name}_${NepaliDateTime.now().toIso8601String().split(".").first}.pdf')
           .create();
 
       await file.writeAsBytes(byte);
@@ -153,7 +165,7 @@ class _GenerateBillsState extends State<GenerateBills> {
                 onPressed: () async {
                   await generatePdf(true);
                 },
-                child: const Text("Generate Pdf (BNB)")),
+                child: const Text("Generate Pdf (BMB)")),
             ElevatedButton(
                 onPressed: () async {
                   await generatePdf();
